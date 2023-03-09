@@ -24,6 +24,12 @@ int line_length(const char* line) {
     return char_count; // повертаємо кількість символів у рядку
 }
 
+int full_length(const char* line) {
+    // цикл ітерується по кожному символу рядка,
+    // доки не зустрічає символ '\0', що позначає кінець рядка
+    for (int i = 0; ; i++) if (line[i] == '\0') return i;// якщо знайдено кінець рядка, повертаємо довжину рядка
+}
+
 void file_sort(const string& inputFile, const string& outputFile){
 // Відкриваємо вхідний файл для читання
 ifstream in(inputFile);
@@ -111,6 +117,7 @@ for (int i = 0; i < count - 1; i++) {
 for (int i = 0; i < count; i++) {
     if (line_length(lines[i]) > 0) {
         fprintf(out, "%d %s", line_length(lines[i]), lines[i]);
+        if (lines[i][full_length(lines[i]) - 1] != '\n') fputc('\n', out);
     }
     // Звільняємо пам'ять, виділену для кожного рядка.
     delete[] lines[i];
@@ -148,28 +155,36 @@ void file_output(const char* filename) {
     fclose(file); // закриваємо файл
 }
 
-void file_append(string filename){
+void file_append(string filename) {
     ofstream file(filename, ios_base::app); // відкриваємо файл в режимі доповнення
     string line;
     cout << "Fill in file. Press >> at the beginning of a new line." << endl; // виводимо повідомлення користувачеві
+    bool first_line = true;
     while (getline(cin, line)) { // зчитуємо кожен рядок, який вводить користувач
         if (line == ">>") { // якщо введено ">>", то закінчуємо цикл
             break;
         }
-        file << line << endl; // дописуємо вміст файлу кожен рядок, який вводить користувач
+        if (!first_line) file << endl;
+        first_line = false;
+        file << line; // дописуємо вміст файлу кожен рядок, який вводить користувач
     }
     file.close(); // закриваємо файл
     cout << "The file has been successfully added."; // виводимо повідомлення про успішне доповнення файлу
 }
 void file_append(const char* filename) {
-    FILE *file = fopen(filename, "a"); // відкриваємо файл в режимі доповнення
+    FILE* file = fopen(filename, "a"); // відкриваємо файл для додавання (append)
     char line[1024];
-    cout << "Fill in file. Press >> at the beginning of a new line." << endl; // виводимо повідомлення користувачеві
-    while (fgets(line, sizeof(line), stdin)) { // зчитуємо кожен рядок, який вводить користувач
-        if (strcmp(line, ">>\n") == 0) { // якщо введено ">>", то закінчуємо цикл
+    int counter = 0; // лічильник для кількості символів в рядку
+    bool first_line = true; // флаг, щоб переконатися, що перший рядок не отримує символ нового рядка
+    cout << "Fill in file. Press >> at the beginning of a new line." << endl; // вивід повідомлення для користувача
+    while (fgets(line, sizeof(line), stdin)) { // читаємо рядок з користувацького вводу
+        if (strcmp(line, ">>\n") == 0) { // якщо рядок починається з >>, то припинити читання вводу
             break;
         }
-        fputs(line, file); // дописуємо вміст файлу кожен рядок, який вводить користувач
+        if (!first_line) fputc('\n', file); // якщо не перший рядок, то додати символ нового рядка до файлу
+        while (line[counter] != '\n') fputc(line[counter++], file); // додати символи рядка до файлу
+        counter = 0; // скинути лічильник символів
+        first_line = false; // встановити флаг на false
     }
-    fclose(file); // закриваємо файл
+    fclose(file); // закрити файл
 }

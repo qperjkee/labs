@@ -1,10 +1,11 @@
 #pragma once
-#include <string>
 
 using namespace std;
 
 int line_length(string);
 int line_length(const char*);
+
+int full_length(const char*);
 
 void file_sort(const string&, const string&);
 void file_sort(const char*, const char*);
