@@ -2,6 +2,8 @@
 
 using namespace std;
 
+bool isMode(const char*, int, char*[]);
+
 int line_length(string);
 int line_length(const char*);
 

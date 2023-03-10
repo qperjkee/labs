@@ -5,6 +5,15 @@
 
 using namespace std;
 
+bool isMode(const char* modeValue, int argc, char* argv[]) {
+    for (int i = 1; i < argc; i++) { // Проходимо по всіх аргументах командного рядку
+        if (strcmp(argv[i], "-mode") == 0 && i + 1 < argc) { // Якщо знаходимо режим "-mode"
+            return strcmp(argv[i+1], modeValue) == 0; // Повертаємо, чи відповідає наступний аргумент режиму modeValue
+        }
+    }
+    return false; // Якщо не знайдено режим "-mode", повертаємо false
+}
+
 int line_length(string line){
     int char_count = 0; // ініціалізуємо змінну, що буде лічильником символів
     for (int i = 0; i < line.length(); i++) { // проходимо крізь кожен символ у рядку
@@ -158,7 +167,7 @@ void file_output(const char* filename) {
 void file_append(string filename) {
     ofstream file(filename, ios_base::app); // відкриваємо файл в режимі доповнення
     string line;
-    cout << "Fill in file. Press >> at the beginning of a new line." << endl; // виводимо повідомлення користувачеві
+    cout << "Fill in file. Press >> at the beginning of a new line to stop." << endl; // виводимо повідомлення користувачеві
     bool first_line = true;
     while (getline(cin, line)) { // зчитуємо кожен рядок, який вводить користувач
         if (line == ">>") { // якщо введено ">>", то закінчуємо цикл
@@ -176,7 +185,7 @@ void file_append(const char* filename) {
     char line[1024];
     int counter = 0; // лічильник для кількості символів в рядку
     bool first_line = true; // флаг, щоб переконатися, що перший рядок не отримує символ нового рядка
-    cout << "Fill in file. Press >> at the beginning of a new line." << endl; // вивід повідомлення для користувача
+    cout << "Fill in file. Press >> at the beginning of a new line to stop." << endl; // вивід повідомлення для користувача
     while (fgets(line, sizeof(line), stdin)) { // читаємо рядок з користувацького вводу
         if (strcmp(line, ">>\n") == 0) { // якщо рядок починається з >>, то припинити читання вводу
             break;

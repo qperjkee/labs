@@ -7,8 +7,6 @@
 
 using namespace std;
 
-bool isMode(const char* modeValue, int argc, char* argv[]);
-
 int main(int argc, char* argv[]){
     // перевірка на режим "FileStream"
     if (isMode("FileStream", argc, argv)) {
@@ -138,16 +136,8 @@ int main(int argc, char* argv[]){
     } while (ch == 'y');
     }
     else{
-        cout << "No mode specified" << endl;
+        cout << "Incorrect mode specified" << endl;
         // виведення помилки, не валідного режиму
     }
 }
 
-bool isMode(const char* modeValue, int argc, char* argv[]) {
-    for (int i = 1; i < argc; i++) { // Проходимо по всіх аргументах командного рядку
-        if (strcmp(argv[i], "-mode") == 0 && i + 1 < argc) { // Якщо знаходимо режим "-mode"
-            return strcmp(argv[i+1], modeValue) == 0; // Повертаємо, чи відповідає наступний аргумент режиму modeValue
-        }
-    }
-    return false; // Якщо не знайдено режим "-mode", повертаємо false
-}
