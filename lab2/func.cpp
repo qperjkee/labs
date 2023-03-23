@@ -96,7 +96,7 @@ bool compare_dates(string date1, string date2){
     sscanf_s(date2.c_str(), "%d/%d/%d", &day2, &month2, &year2);
 
     // Порівнюємо різні компоненти дат, якщо перша дата не більша або рівна другій, повертаємо true
-    if(day <= day2 && month <= month2 && year <= year2){
+    if(day <= day2 && month <= month2 && year <= year2 || day >= day2 && month <= month2 && year <= year2 || day >= day2 && month >= month2 && year <= year2 || day <= day2 && month >= month2 && year <= year2){
         return true;
     }
     else{
@@ -216,23 +216,26 @@ void copy_products_before_current_month(const string& input_filename, const stri
   ifstream input_file(input_filename, ios::binary);
   ofstream output_file(output_filename, ios::binary);
 
-  // Отримуємо поточний місяць
+  // Отримуємо поточну дату
   time_t now = time(nullptr);
   tm local_time = *localtime(&now);
   int current_month = local_time.tm_mon + 1;
+  int current_year = local_time.tm_year + 1900;
 
   Product product;
   while (input_file.read(reinterpret_cast<char*>(&product), sizeof(Product))) {
 
-    // Отримуємо місяць виготовлення продукту з його дати виробництва
+    // Отримуємо дату виготовлення продукту
     string date_str(product.dateOfManufacture);
     size_t first_slash_pos = date_str.find('/');
     size_t second_slash_pos = date_str.find('/', first_slash_pos + 1);
-    string month_str = date_str.substr(first_slash_pos + 1, second_slash_pos - first_slash_pos - 1);
+    string month_str = date_str.substr(0, first_slash_pos);
+    string year_str = date_str.substr(second_slash_pos + 1);
     int product_month = stoi(month_str);
+    int product_year = stoi(year_str);
 
     // Якщо продукт був виготовлений до поточного місяця включно, то копіюємо його в вихідний файл
-    if (product_month < current_month) {
+    if ((product_year < current_year) || (product_year == current_year && product_month < current_month)) {
       output_file.write(reinterpret_cast<char*>(&product), sizeof(Product));
     }
   }
